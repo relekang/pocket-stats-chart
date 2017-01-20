@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chart?</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+    <script src="http://cdn.date-fns.org/v1.9.0/date_fns.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+  </head>
+  <body style="padding: 0; margin: 0;">
+    <canvas id="chart" style="width: 100%; height: auto !important"></canvas>
+    <script>
+      const initialData = {
+        dataset: []
+      }
+      const options = {
+        maintainAspectRatio: false
+      }
+      const chart = new Chart('chart', { type: 'line', data: initialData, options: options });
+
+      window.addEventListener('resize', () => {
+        chart.render();
+      });
+
+      fetch('https://stats.lkng.me/pocket?all=true&inc=false')
+        .then(response => response.json())
+        .then(response => {
+          const points = response.data['/pocket'].views.reduce(
+            (lastValue, item) => {
+              const key = dateFns.format(item.time, 'YYYY-MM-DD');
+              if (lastValue.hasOwnProperty(key)) {
+                lastValue[key] += 1;
+              } else {
+                lastValue[key] = 1;
+              }
+              return lastValue;
+            },
+            {}
+          )
+
+          chart.data.labels = _.keys(points);
+          chart.data.datasets = [{
+            label: 'Articles added to pocket',
+            data: _.values(points),
+            borderColor: '#c2e0c6',
+          }];
+          chart.update();
+        });
+
+    </script>
+  </body>
+</html>

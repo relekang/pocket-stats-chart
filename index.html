@@ -5,16 +5,51 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/date-fns/1.26.0/date_fns.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+    <style>
+      html {
+        height: 100%;
+
+      }
+
+      body {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        background: #222;
+        display: flex;
+        align-items: center;
+      }
+
+      .chart__wrapper {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+    </style>
   </head>
-  <body style="padding: 0; margin: 0;">
-    <canvas id="chart" style="width: 100%; height: auto !important" height="600"></canvas>
+  <body>
+    <div class="chart__wrapper">
+      <canvas id="chart" width="500" height="500"></canvas>
+    </div>
+
     <script>
       const initialData = {
         dataset: []
       }
-      const options = {
-        maintainAspectRatio: false
+
+      const gridLines = {
+        color: 'rgba(255, 255, 255, 0.2)',
       }
+
+      const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          xAxes: [{ gridLines }],
+          yAxes: [{ gridLines }],
+        }
+      }
+
       const chart = new Chart('chart', { type: 'line', data: initialData, options: options });
 
       function reducePoints(lastValue, item) {
@@ -48,11 +83,13 @@
               label: 'Articles added to pocket',
               data: _.map(chart.data.labels, key => added[key] || 0),
               borderColor: '#c2e0c6',
+              backgroundColor: 'rgb(194,224,198, 0.95)',
             },
             {
               label: 'Articles archived in pocket',
               data: _.map(chart.data.labels, key => archived[key] || 0),
               borderColor: '#d4c5f9',
+              backgroundColor: 'rgb(212,197,249, 0.95)',
             }
           ];
           chart.update();

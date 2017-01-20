@@ -17,6 +17,16 @@
       }
       const chart = new Chart('chart', { type: 'line', data: initialData, options: options });
 
+      function reducePoints(lastValue, item) {
+        const key = dateFns.format(item.time, 'YYYY-MM-DD');
+        if (lastValue.hasOwnProperty(key)) {
+          lastValue[key] += 1;
+        } else {
+          lastValue[key] = 1;
+        }
+        return lastValue;
+      }
+
       window.addEventListener('resize', () => {
         chart.render();
       });
@@ -24,25 +34,27 @@
       fetch('https://stats.lkng.me/pocket?all=true&inc=false')
         .then(response => response.json())
         .then(response => {
-          const points = response.data['/pocket'].views.reduce(
-            (lastValue, item) => {
-              const key = dateFns.format(item.time, 'YYYY-MM-DD');
-              if (lastValue.hasOwnProperty(key)) {
-                lastValue[key] += 1;
-              } else {
-                lastValue[key] = 1;
-              }
-              return lastValue;
-            },
-            {}
-          )
+          const added = _.reduce(_.get(response.data['/pocket'], 'views'), reducePoints, {})
+          const archived = _.reduce(_.get(response.data['/pocket/archive'], 'views'), reducePoints, {})
 
-          chart.data.labels = _.keys(points);
-          chart.data.datasets = [{
-            label: 'Articles added to pocket',
-            data: _.values(points),
-            borderColor: '#c2e0c6',
-          }];
+          chart.data.labels = _([])
+            .concat(_.keys(added))
+            .concat(_.keys(archived))
+            .uniq()
+            .value();
+
+          chart.data.datasets = [
+            {
+              label: 'Articles added to pocket',
+              data: _.map(chart.data.labels, key => added[key] || 0),
+              borderColor: '#c2e0c6',
+            },
+            {
+              label: 'Articles archived in pocket',
+              data: _.map(chart.data.labels, key => archived[key] || 0),
+              borderColor: '#d4c5f9',
+            }
+          ];
           chart.update();
         });
 

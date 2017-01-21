@@ -33,6 +33,8 @@
     </div>
 
     <script>
+      Chart.defaults.global.defaultFontColor = "#dadada";
+
       const initialData = {
         dataset: []
       }
@@ -80,17 +82,17 @@
 
           chart.data.datasets = [
             {
-              label: 'Articles added to pocket',
-              data: _.map(chart.data.labels, key => added[key] || 0),
-              borderColor: '#c2e0c6',
-              backgroundColor: 'rgb(194,224,198, 0.95)',
-            },
-            {
               label: 'Articles archived in pocket',
               data: _.map(chart.data.labels, key => archived[key] || 0),
               borderColor: '#d4c5f9',
-              backgroundColor: 'rgb(212,197,249, 0.95)',
-            }
+              backgroundColor: 'rgba(212,197,249, 0.7)',
+            },
+            {
+              label: 'Articles added to pocket',
+              data: _.map(chart.data.labels, key => added[key] || 0),
+              borderColor: '#c2e0c6',
+              backgroundColor: 'rgba(194,224,198, 0.7)',
+            },
           ];
           chart.update();
         });

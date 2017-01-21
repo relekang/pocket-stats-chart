@@ -2,7 +2,8 @@
 <html>
   <head>
     <title>Chart?</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.1/fetch.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/es6-promise/4.0.5/es6-promise.auto.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fetch/2.0.1/fetch.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/date-fns/1.26.0/date_fns.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
@@ -35,15 +36,15 @@
     <script>
       Chart.defaults.global.defaultFontColor = "#dadada";
 
-      const initialData = {
+      var initialData = {
         dataset: []
       }
 
-      const gridLines = {
+      var gridLines = {
         color: 'rgba(255, 255, 255, 0.2)',
       }
 
-      const options = {
+      var options = {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
@@ -52,10 +53,10 @@
         }
       }
 
-      const chart = new Chart('chart', { type: 'line', data: initialData, options: options });
+      var chart = new Chart('chart', { type: 'line', data: initialData, options: options });
 
       function reducePoints(lastValue, item) {
-        const key = dateFns.format(item.time, 'YYYY-MM-DD');
+        var key = dateFns.format(item.time, 'YYYY-MM-DD');
         if (lastValue.hasOwnProperty(key)) {
           lastValue[key] += 1;
         } else {
@@ -71,8 +72,8 @@
       fetch('https://stats.lkng.me/pocket?all=true&inc=false')
         .then(response => response.json())
         .then(response => {
-          const added = _.reduce(_.get(response.data['/pocket'], 'views'), reducePoints, {})
-          const archived = _.reduce(_.get(response.data['/pocket/archive'], 'views'), reducePoints, {})
+          var added = _.reduce(_.get(response.data['/pocket'], 'views'), reducePoints, {})
+          var archived = _.reduce(_.get(response.data['/pocket/archive'], 'views'), reducePoints, {})
 
           chart.data.labels = _([])
             .concat(_.keys(added))

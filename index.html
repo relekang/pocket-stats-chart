@@ -82,6 +82,7 @@
             .value()
             .sort();
 
+          var temporarySum = 0;
           chart.data.datasets = [
             {
               label: 'Articles archived in pocket',
@@ -94,6 +95,16 @@
               data: _.map(chart.data.labels, key => added[key] || 0),
               borderColor: '#c2e0c6',
               backgroundColor: 'rgba(194,224,198, 0.7)',
+            },
+            {
+              label: 'Articles in pocket',
+              data: _.map(chart.data.labels, key => {
+                temporarySum += (added[key] || 0) - (archived[key] || 0)
+                return temporarySum
+              }),
+              borderDash: [40, 10],
+              borderColor: '#eaeaea',
+              backgroundColor: 'rgba(0,0,0,0)',
             },
           ];
           chart.update();
